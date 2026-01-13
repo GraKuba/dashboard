@@ -1,4 +1,3 @@
-
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import App from './App';
 import { Sidebar } from './Sidebar';
@@ -12,23 +11,25 @@ vi.mock('./InputForm', () => ({ InputForm: ({ onSaved }) => <div onClick={onSave
 describe('Sidebar Component', () => {
     it('renders navigation items', () => {
         render(<Sidebar currentView="dashboard" setView={() => {}} />);
-        expect(screen.getByText(/dashboard/i)).toBeInTheDocument();
-        expect(screen.getByText(/new report/i)).toBeInTheDocument();
-        expect(screen.getByText(/sign out/i)).toBeInTheDocument();
+        expect(screen.getByRole('menuitem', { name: /dashboard/i })).toBeInTheDocument();
+        expect(screen.getByRole('menuitem', { name: /new report/i })).toBeInTheDocument();
+        expect(screen.getByRole('menuitem', { name: /sign out/i })).toBeInTheDocument();
     });
 
     it('calls setView on click', () => {
         const setViewMock = vi.fn();
         render(<Sidebar currentView="dashboard" setView={setViewMock} />);
         
-        fireEvent.click(screen.getByText(/new report/i));
+        fireEvent.click(screen.getByRole('menuitem', { name: /new report/i }));
         expect(setViewMock).toHaveBeenCalledWith('input');
     });
 
-    it('calls signOut on click', () => {
+    it('calls signOut on click', async () => {
         render(<Sidebar currentView="dashboard" setView={() => {}} />);
-        fireEvent.click(screen.getByText(/sign out/i));
-        expect(supabase.auth.signOut).toHaveBeenCalled();
+        fireEvent.click(screen.getByRole('menuitem', { name: /sign out/i }));
+        await waitFor(() => {
+            expect(supabase.auth.signOut).toHaveBeenCalled();
+        });
     });
 });
 
@@ -71,8 +72,12 @@ describe('App Integration', () => {
         });
 
         // Click New Report in sidebar
-        fireEvent.click(screen.getByText(/new report/i));
-        expect(screen.getByText('Input Form Component')).toBeInTheDocument();
+        fireEvent.click(screen.getByRole('menuitem', { name: /new report/i }));
+        
+        // Wait for lazy-loaded component
+        await waitFor(() => {
+            expect(screen.getByText('Input Form Component')).toBeInTheDocument();
+        });
         expect(screen.queryByText('Dashboard Component')).not.toBeInTheDocument();
     });
 });

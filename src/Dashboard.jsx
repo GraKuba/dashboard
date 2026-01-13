@@ -82,19 +82,6 @@ export function Dashboard() {
 
     return (
         <div className="dashboard-content">
-            <style>{`
-                .skeleton {
-                    background: linear-gradient(90deg, #f0f2f5 25%, #e6ebf1 50%, #f0f2f5 75%);
-                    background-size: 200% 100%;
-                    animation: shimmy 1.5s infinite;
-                    border-radius: 4px;
-                }
-                @keyframes shimmy {
-                    0% { background-position: 200% 0; }
-                    100% { background-position: -200% 0; }
-                }
-            `}</style>
-            
             {/* KPI Cards Row */}
             <div className="data-grid" style={{ marginBottom: '64px' }}>
                 <MetricCard 

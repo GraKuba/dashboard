@@ -17,114 +17,79 @@ export function Sidebar({ currentView, setView }) {
     setIsOpen(false); // Close menu on selection (mobile)
   };
 
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+  };
+
   return (
-    <div className="sidebar">
+    <nav className="sidebar" aria-label="Main navigation">
       <div className="sidebar-brand">
-        <Sprout size={20} color="var(--accent)" />
+        <Sprout size={20} color="var(--accent)" aria-hidden="true" />
         <span>FarmerPortal</span>
       </div>
+
       {/* Mobile Toggle */}
       <button
         className="mobile-toggle"
         onClick={() => setIsOpen(!isOpen)}
-        style={{
-          background: "none",
-          border: "none",
-          cursor: "pointer",
-          padding: "8px",
-          display: "none",
-        }}
+        aria-expanded={isOpen}
+        aria-controls="nav-container"
+        aria-label={isOpen ? "Close navigation menu" : "Open navigation menu"}
       >
         {isOpen ? (
-          <X size={22} color="var(--text-primary)" />
+          <X size={22} color="var(--text-primary)" aria-hidden="true" />
         ) : (
-          <Menu size={22} color="var(--text-primary)" />
+          <Menu size={22} color="var(--text-primary)" aria-hidden="true" />
         )}
       </button>
 
-      <style>{`
-                /* Desktop / default */
-                .nav-container { display: flex; flex-direction: column; width: 100%; flex: 1; }
+      <div 
+        id="nav-container"
+        className={`nav-container ${isOpen ? 'open' : 'closed'}`}
+        role="menu"
+      >
+        <div className="desktop-spacer" aria-hidden="true"></div>
 
-                @media (max-width: 1024px) {
-                    .mobile-toggle { 
-                        display: block !important; 
-                        z-index: 1001; 
-                        position: relative;
-                    }
-                    /* CRITICAL: Remove nav-container from sidebar layout on mobile */
-                    .nav-container { 
-                        position: fixed !important;
-                        top: 0;
-                        left: 0;
-                        width: 100%;
-                        height: 100vh;
-                        background: var(--bg-surface);
-                        z-index: 1000;
-                        padding: 72px 24px 40px 24px;
-                        box-sizing: border-box;
-                        display: flex;
-                        flex-direction: column;
-                        /* Animation */
-                        opacity: ${isOpen ? 1 : 0};
-                        pointer-events: ${isOpen ? "all" : "none"};
-                        transform: ${
-                          isOpen ? "translateY(0)" : "translateY(-10px)"
-                        };
-                        transition: opacity 0.3s ease, transform 0.3s ease;
-                    }
-                    .nav-item {
-                        padding: 16px;
-                        font-size: 18px;
-                        border-bottom: 1px solid var(--border);
-                        border-radius: 0;
-                        margin-bottom: 0;
-                        opacity: ${isOpen ? 1 : 0};
-                        transform: ${
-                          isOpen ? "translateY(0)" : "translateY(10px)"
-                        };
-                        transition: opacity 0.3s ease 0.1s, transform 0.3s ease 0.1s;
-                    }
-                    .nav-item:first-child { border-top: 1px solid var(--border); }
-                    .nav-item:hover { background: var(--bg-page); }
-                    /* Hide desktop spacer on mobile */
-                    .desktop-spacer { display: none !important; }
-                }
-            `}</style>
-
-      <div className="nav-container">
-        <div style={{ height: "32px" }} className="desktop-spacer"></div>{" "}
-        {/* Spacing for desktop */}
-        <div
+        <button
+          type="button"
+          role="menuitem"
           className={`nav-item ${currentView === "dashboard" ? "active" : ""}`}
           onClick={() => handleNav("dashboard")}
+          aria-current={currentView === "dashboard" ? "page" : undefined}
         >
-          <div className="nav-icon">
+          <span className="nav-icon" aria-hidden="true">
             <LayoutDashboard size={20} />
-          </div>
+          </span>
           Dashboard
-        </div>
-        <div
+        </button>
+
+        <button
+          type="button"
+          role="menuitem"
           className={`nav-item ${currentView === "input" ? "active" : ""}`}
           onClick={() => handleNav("input")}
+          aria-current={currentView === "input" ? "page" : undefined}
         >
-          <div className="nav-icon">
+          <span className="nav-icon" aria-hidden="true">
             <FilePlus size={20} />
-          </div>
+          </span>
           New Report
-        </div>
-        <div style={{ flex: 1 }}></div>
-        <div
-          className="nav-item"
-          style={{ color: "#ef4444", marginTop: "auto" }}
-          onClick={() => supabase.auth.signOut()}
+        </button>
+
+        <div style={{ flex: 1 }} aria-hidden="true"></div>
+
+        <button
+          type="button"
+          role="menuitem"
+          className="nav-item nav-item-danger"
+          onClick={handleSignOut}
         >
-          <div className="nav-icon">
+          <span className="nav-icon" aria-hidden="true">
             <LogOut size={20} />
-          </div>
+          </span>
           Sign Out
-        </div>
+        </button>
       </div>
-    </div>
+    </nav>
   );
 }

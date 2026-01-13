@@ -1,33 +1,44 @@
+import { useState, useEffect, lazy, Suspense } from 'react';
+import { supabase } from './supabase';
+import { Auth } from './Auth';
+import { Sidebar } from './Sidebar';
+import { ErrorBoundary } from './ErrorBoundary';
+import { Toaster } from 'sonner';
+import { UI } from './constants';
 
-import { useState, useEffect } from 'react'
-import { supabase } from './supabase'
-import { Auth } from './Auth'
-import { Dashboard } from './Dashboard'
-import { InputForm } from './InputForm'
-import { Sidebar } from './Sidebar'
+// Lazy load heavy components (charts library, etc.)
+const Dashboard = lazy(() => import('./Dashboard').then(m => ({ default: m.Dashboard })));
+const InputForm = lazy(() => import('./InputForm').then(m => ({ default: m.InputForm })));
 
-import { Toaster } from 'sonner'
+// Loading fallback component
+function LoadingFallback() {
+  return (
+    <div className="loading-spinner-container">
+      Loading...
+    </div>
+  );
+}
 
 function App() {
-  const [session, setSession] = useState(null)
-  const [view, setView] = useState('dashboard') // dashboard | input
-  const [loadingSession, setLoadingSession] = useState(true)
+  const [session, setSession] = useState(null);
+  const [view, setView] = useState('dashboard'); // dashboard | input
+  const [loadingSession, setLoadingSession] = useState(true);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session)
-      setLoadingSession(false)
-    })
+      setSession(session);
+      setLoadingSession(false);
+    });
 
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session)
-      setLoadingSession(false)
-    })
+      setSession(session);
+      setLoadingSession(false);
+    });
 
-    return () => subscription.unsubscribe()
-  }, [])
+    return () => subscription.unsubscribe();
+  }, []);
 
   // Scroll to top when view changes
   useEffect(() => {
@@ -35,39 +46,52 @@ function App() {
   }, [view]);
 
   if (loadingSession) {
-      return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', color: '#635bff' }}>Loading...</div>
+    return (
+      <div className="loading-spinner-container">
+        Loading...
+      </div>
+    );
   }
 
   if (!session) {
     return (
-      <>
-        <Toaster position="top-right" />
+      <ErrorBoundary>
+        <Toaster position={UI.TOAST_POSITION} />
         <Auth />
-      </>
-    )
+      </ErrorBoundary>
+    );
   }
 
   return (
-    <div className="app-layout">
-        <Toaster position="top-right" />
+    <ErrorBoundary>
+      {/* Skip link for keyboard navigation accessibility */}
+      <a href="#main-content" className="skip-link">
+        Skip to main content
+      </a>
+      
+      <div className="app-layout">
+        <Toaster position={UI.TOAST_POSITION} />
         <Sidebar currentView={view} setView={setView} />
         
-        <div className="main-content">
-            <div key={view} className="animate-enter">
-                {view === 'dashboard' ? (
-                    <>
-                        <header style={{ marginBottom: '32px' }}>
-                            <h1 style={{ margin: 0 }}>Overview</h1>
-                        </header>
-                        <Dashboard />
-                    </>
-                ) : (
-                    <InputForm onSaved={() => setView('dashboard')} />
-                )}
-            </div>
-        </div>
-    </div>
-  )
+        <main id="main-content" className="main-content">
+          <div key={view} className="animate-enter">
+            <Suspense fallback={<LoadingFallback />}>
+              {view === 'dashboard' ? (
+                <>
+                  <header style={{ marginBottom: '32px' }}>
+                    <h1 style={{ margin: 0 }}>Overview</h1>
+                  </header>
+                  <Dashboard />
+                </>
+              ) : (
+                <InputForm onSaved={() => setView('dashboard')} />
+              )}
+            </Suspense>
+          </div>
+        </main>
+      </div>
+    </ErrorBoundary>
+  );
 }
 
-export default App
+export default App;

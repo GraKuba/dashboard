@@ -110,8 +110,6 @@ img, svg, canvas {
 
 .nav-item:hover {
   color: var(--text-primary);
-  background: #ffffff; /* Keep white but add shadow/border */
-  /* border-color: var(--border); No, just subtle bg shift or text color */
   background: #fcfcfd;
 }
 
@@ -121,9 +119,32 @@ img, svg, canvas {
   font-weight: 600;
 }
 
+.nav-item-danger {
+  color: #ef4444;
+  margin-top: auto;
+}
+
+.nav-item-danger:hover {
+  color: #dc2626;
+  background: #fef2f2;
+}
+
 .nav-icon {
   margin-right: 12px;
   display: flex; /* Center icon */
+}
+
+/* Mobile toggle button base styles */
+.mobile-toggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  display: none;
+}
+
+.desktop-spacer {
+  height: 32px;
 }
 
 .main-content {
@@ -575,4 +596,132 @@ tr:hover td {
 }
 ::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
+}
+
+/* Skeleton Loading Animation */
+.skeleton {
+  background: linear-gradient(90deg, #f0f2f5 25%, #e6ebf1 50%, #f0f2f5 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 4px;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Mobile Navigation Overlay */
+.nav-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  flex: 1;
+}
+
+@media (max-width: 1024px) {
+  .mobile-toggle {
+    display: block !important;
+    z-index: 1001;
+    position: relative;
+  }
+
+  .nav-container {
+    position: fixed !important;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background: var(--bg-surface);
+    z-index: 1000;
+    padding: 72px 24px 40px 24px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+
+  .nav-container.closed {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-10px);
+  }
+
+  .nav-container.open {
+    opacity: 1;
+    pointer-events: all;
+    transform: translateY(0);
+  }
+
+  .nav-container .nav-item {
+    padding: 16px;
+    font-size: 18px;
+    border-bottom: 1px solid var(--border);
+    border-radius: 0;
+    margin-bottom: 0;
+    transition: opacity 0.3s ease 0.1s, transform 0.3s ease 0.1s;
+  }
+
+  .nav-container.closed .nav-item {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  .nav-container.open .nav-item {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .nav-container .nav-item:first-child {
+    border-top: 1px solid var(--border);
+  }
+
+  .nav-container .nav-item:hover {
+    background: var(--bg-page);
+  }
+
+  .desktop-spacer {
+    display: none !important;
+  }
+}
+
+/* Accessibility: Focus styles for keyboard navigation */
+.nav-item:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Skip to main content link (accessibility) */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: var(--accent);
+  color: white;
+  padding: 8px 16px;
+  z-index: 100;
+  text-decoration: none;
+  font-weight: 500;
+  border-radius: 0 0 4px 0;
+  transition: top 0.2s;
+}
+
+.skip-link:focus {
+  top: 0;
+}
+
+/* Loading spinner for Suspense fallback */
+.loading-spinner-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  color: var(--accent);
+  font-size: 16px;
+  font-weight: 500;
 }

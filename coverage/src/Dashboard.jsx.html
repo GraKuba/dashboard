@@ -254,18 +254,7 @@
 <a name='L189'></a><a href='#L189'>189</a>
 <a name='L190'></a><a href='#L190'>190</a>
 <a name='L191'></a><a href='#L191'>191</a>
-<a name='L192'></a><a href='#L192'>192</a>
-<a name='L193'></a><a href='#L193'>193</a>
-<a name='L194'></a><a href='#L194'>194</a>
-<a name='L195'></a><a href='#L195'>195</a>
-<a name='L196'></a><a href='#L196'>196</a>
-<a name='L197'></a><a href='#L197'>197</a>
-<a name='L198'></a><a href='#L198'>198</a>
-<a name='L199'></a><a href='#L199'>199</a>
-<a name='L200'></a><a href='#L200'>200</a>
-<a name='L201'></a><a href='#L201'>201</a>
-<a name='L202'></a><a href='#L202'>202</a>
-<a name='L203'></a><a href='#L203'>203</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L192'></a><a href='#L192'>192</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -311,6 +300,8 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -346,19 +337,6 @@
 <span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">6x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -498,15 +476,17 @@ function ChartCard({ title, children, loading }) {
         return (
              &lt;div className="card" style={{ minHeight: '400px' }}&gt;
                 &lt;h2&gt;{title}&lt;/h2&gt;
-                &lt;div className="skeleton" style={{ flex: 1, width: '100%', borderRadius: '4px' }}&gt;&lt;/div&gt;
+                &lt;div className="skeleton" style={{ flex: 1, width: '100%', borderRadius: '4px', marginTop: '300px' }}&gt;&lt;/div&gt;
             &lt;/div&gt;
         )
     }
     return (
         &lt;div className="card" style={{ minHeight: '400px' }}&gt;
             &lt;h2&gt;{title}&lt;/h2&gt;
-            &lt;div style={{ flex: 1, minHeight: 0 }}&gt;
-                {children}
+            &lt;div style={{ flex: 1, minHeight: 0, position: 'relative' }}&gt;
+                &lt;div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}&gt;
+                    {children}
+                &lt;/div&gt;
             &lt;/div&gt;
         &lt;/div&gt;
     )
@@ -549,21 +529,8 @@ export function Dashboard() {
 &nbsp;
     return (
         &lt;div className="dashboard-content"&gt;
-            &lt;style&gt;{`
-                .skeleton {
-                    background: linear-gradient(90deg, #f0f2f5 25%, #e6ebf1 50%, #f0f2f5 75%);
-                    background-size: 200% 100%;
-                    animation: shimmy 1.5s infinite;
-                    border-radius: 4px;
-                }
-                @keyframes shimmy {
-                    0% { background-position: 200% 0; }
-                    100% { background-position: -200% 0; }
-                }
-            `}&lt;/style&gt;
-            
             {/* KPI Cards Row */}
-            &lt;div className="data-grid"&gt;
+            &lt;div className="data-grid" style={{ marginBottom: '64px' }}&gt;
                 &lt;MetricCard 
                     loading={loading}
                     title="Revenue / Hectare"
@@ -587,10 +554,10 @@ export function Dashboard() {
             &lt;/div&gt;
 &nbsp;
             {/* Charts Row */}
-            &lt;div className="data-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))' }}&gt;
+            &lt;div className="charts-grid" style={{ marginTop: '32px', marginBottom: '64px' }}&gt;
                 &lt;ChartCard title="GHG Emissions vs Revenue" loading={loading}&gt;
                     &lt;ResponsiveContainer width="100%" height="100%"&gt;
-                        &lt;LineChart data={metrics}&gt;
+                        &lt;LineChart data={metrics} margin={{ top: 5, right: 40, left: 0, bottom: 5 }}&gt;
                             &lt;CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e6ebf1" /&gt;
                             &lt;XAxis dataKey="month_date" axisLine={false} tickLine={false} tick={{fill: '#8898aa', fontSize: 12}} dy={10} /&gt;
                             &lt;YAxis yAxisId="left" axisLine={false} tickLine={false} tick={{fill: '#ef4444', fontSize: 12}} /&gt;
@@ -616,7 +583,7 @@ export function Dashboard() {
             &lt;/div&gt;
 &nbsp;
             {/* Data Table */}
-            &lt;div className="card" style={{ padding: 0, overflow: 'hidden' }}&gt;
+            &lt;div className="card" style={{ padding: 0, overflow: 'hidden', marginTop: '32px' }}&gt;
                 &lt;h2 style={{ padding: '24px 24px 0 24px' }}&gt;Detailed History&lt;/h2&gt;
                 &lt;div className="table-container"&gt;
                     &lt;table&gt;
@@ -676,7 +643,7 @@ export function Dashboard() {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-01-13T14:39:04.518Z
+                at 2026-01-13T17:18:53.362Z
             </div>
         <script src="../prettify.js"></script>
         <script>

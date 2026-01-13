@@ -1,39 +1,44 @@
-
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { supabase } from './supabase';
 import { toast } from 'sonner';
 import { validateFormData } from './utils/validation';
+import { STORAGE_KEYS } from './constants';
+
+// Initial form data structure - defined outside component to avoid recreation
+const createInitialData = () => ({
+    month_date: new Date().toISOString().slice(0, 7) + '-01',
+    farm_area: '',
+    boxes_produced: '',
+    boxes_banana_meal: '',
+    boxes_local_market: '',
+    boxes_rejected: '',
+    boxes_export_customers: '',
+    waste_boxes_supply_chain: '',
+    irrigation_hours: '',
+    diesel_consumed_liters: '',
+    pump_capacity_gpm: '', 
+    fertilizer_cost_ga: '',
+    fertilizer_cost_gec: '',
+    labor_cost: '',
+    maintenance_cost: '',
+    avg_selling_price: ''
+});
 
 export function InputForm({ onSaved }) {
     const [loading, setLoading] = useState(false);
     
-    const initialData = {
-        month_date: new Date().toISOString().slice(0, 7) + '-01',
-        farm_area: '',
-        boxes_produced: '',
-        boxes_banana_meal: '',
-        boxes_local_market: '',
-        boxes_rejected: '',
-        boxes_export_customers: '',
-        waste_boxes_supply_chain: '',
-        irrigation_hours: '',
-        diesel_consumed_liters: '',
-        pump_capacity_gpm: '', 
-        fertilizer_cost_ga: '',
-        fertilizer_cost_gec: '',
-        labor_cost: '',
-        maintenance_cost: '',
-        avg_selling_price: ''
-    };
+    // Memoize initial data to prevent unnecessary re-renders
+    const initialData = useMemo(() => createInitialData(), []);
 
     const [formData, setFormData] = useState(initialData);
 
     // Load from localStorage on mount
     useEffect(() => {
-        const saved = localStorage.getItem('monthly_report_draft');
+        const saved = localStorage.getItem(STORAGE_KEYS.MONTHLY_REPORT_DRAFT);
         if (saved) {
             try {
-                setFormData({ ...initialData, ...JSON.parse(saved) });
+                const parsedDraft = JSON.parse(saved);
+                setFormData(prev => ({ ...prev, ...parsedDraft }));
                 toast.info('Restored draft from session.');
             } catch (e) {
                 console.error("Failed to load draft", e);
@@ -41,12 +46,15 @@ export function InputForm({ onSaved }) {
         }
     }, []);
 
-    // Save to localStorage on change
-    const handleChange = (e) => {
-        const nextData = { ...formData, [e.target.name]: e.target.value };
-        setFormData(nextData);
-        localStorage.setItem('monthly_report_draft', JSON.stringify(nextData));
-    };
+    // Save to localStorage on change - using useCallback for stable reference
+    const handleChange = useCallback((e) => {
+        const { name, value } = e.target;
+        setFormData(prev => {
+            const nextData = { ...prev, [name]: value };
+            localStorage.setItem(STORAGE_KEYS.MONTHLY_REPORT_DRAFT, JSON.stringify(nextData));
+            return nextData;
+        });
+    }, []);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -69,8 +77,8 @@ export function InputForm({ onSaved }) {
             if (error) throw error;
             
             toast.success('Report saved successfully!');
-            localStorage.removeItem('monthly_report_draft');
-            setFormData(initialData);
+            localStorage.removeItem(STORAGE_KEYS.MONTHLY_REPORT_DRAFT);
+            setFormData(createInitialData());
             if (onSaved) onSaved();
         } catch (error) {
             toast.error('Error saving: ' + error.message);

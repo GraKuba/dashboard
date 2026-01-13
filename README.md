@@ -1,84 +1,233 @@
-# Farmer Dashboard - Final Walkthrough
+# Farmer Dashboard
 
-The Farmer Dashboard is now fully implemented, styled, and version-controlled.
+A production-ready React dashboard for agricultural data tracking and analytics, built with modern best practices.
 
 ## Key Features
 
 ### 1. Modern UI (Stripe-inspired)
-- **Theme**: Light mode, clean whitespace, Inter font, and "Blurple" accents.
-- **Navigation**: Sidebar with professional Lucide icons for easy access.
-- **Responsive**: Cards and charts adapt to screen size using CSS Grid.
+- **Theme**: Light mode, clean whitespace, Inter font, and "Blurple" accents
+- **Navigation**: Accessible sidebar with Lucide icons
+- **Responsive**: Cards and charts adapt to screen size using CSS Grid
 
 ### 2. Comprehensive Data Entry
-- **Structured Form**: Input split into logical sections (Metadata, Production, Resources, Costs).
-- **Validation**: Prevents negative number inputs to ensure data integrity.
-- **Data Model**: Captures all 20+ required fields from the farmer Excel sheets.
+- **Structured Form**: Input split into logical sections (Metadata, Production, Resources, Costs)
+- **Validation**: Prevents negative numbers and cross-validates field totals
+- **Draft Persistence**: Form data auto-saved to `localStorage`
 
-### 3. Resilience & UX (New)
-- **Data Persistence**: Form drafts are automatically saved to `localStorage`, protecting against browser crashes or network loss.
-- **Smart Validation**: Cross-field checks ensure production totals match the sum of individual outcomes (e.g., Export + Local + Waste).
-- **Toast Notifications**: Replaced intrusive alerts with elegant `Sonner` toasts for success, error, and warning messages.
+### 3. Real-time Analytics
+- **Loading States**: Skeleton loaders provide visual feedback
+- **Live Updates**: Supabase real-time subscriptions
+- **Metrics**: Revenue/Hectare, GHG Emissions, Water Usage
+- **Charts**: Dual-axis line chart (GHG vs Revenue), Bar chart (Water Productivity)
 
-### 4. Real-time Analytics
-- **Loading States**: Shimmering skeletons provide visual feedback while data loads.
-- **Metrics**:
-    - **Revenue/Hectare**: Calculated instantly.
-    - **GHG Emissions**: Estimated from Diesel & Fertilizer inputs.
-    - **Water Usage**: Visualized in m³.
-- **Charts**:
-    - **Production**: Bar chart of monthly output.
-    - **Efficiency**: Dual-axis chart comparing GHG Emissions vs. Revenue.
+### 4. Production-Ready Architecture
+- **Error Boundary**: Graceful error handling prevents white screen crashes
+- **Code Splitting**: Lazy-loaded components reduce initial bundle size
+- **Environment Validation**: Fails fast with clear error messages
+- **CI/CD Pipeline**: Automated testing and builds via GitHub Actions
 
-## Technical Setup
+### 5. Accessibility (WCAG 2.1)
+- Semantic HTML (`<nav>`, `<main>`, `<button>`)
+- ARIA attributes for screen readers
+- Skip-to-content link for keyboard navigation
+- Focus indicators on interactive elements
 
-- **Frontend**: React + Vite
-- **Backend**: Supabase (Postgres + Auth)
-- **Repository**: [github.com/GraKuba/dashboard](https://github.com/GraKuba/dashboard)
+---
 
-## How to Run
+## Tech Stack
 
-1.  **Start Local Server**:
-    ```bash
-    npm run dev
-    ```
-2.  **Deploy**:
-    Code is ready for Cloudflare Pages. Just modify build settings to:
-    - Build Command: `npm run build`
-    - Output Directory: `dist`
+| Layer | Technology |
+|-------|------------|
+| **Frontend** | React 19, Vite 7 |
+| **Backend** | Supabase (Postgres + Auth + Realtime) |
+| **Charts** | Recharts |
+| **Styling** | CSS Variables, CSS Grid |
+| **Testing** | Vitest, React Testing Library |
+| **CI/CD** | GitHub Actions |
 
-## Testing & Quality Assurance
+---
 
-We have implemented a robust test suite using **Vitest** and **React Testing Library**, achieving over **91% code coverage**.
+## Quick Start
+
+### Prerequisites
+- Node.js 20+
+- npm 10+
+- Supabase project (for backend)
+
+### Installation
+
+```bash
+# Clone repository
+git clone https://github.com/GraKuba/dashboard.git
+cd dashboard
+
+# Install dependencies
+npm install
+
+# Configure environment
+cp .env.example .env
+# Edit .env with your Supabase credentials
+
+# Start development server
+npm run dev
+```
+
+### Environment Variables
+
+Create a `.env` file with:
+
+```env
+VITE_SUPABASE_URL=https://your-project.supabase.co
+VITE_SUPABASE_ANON_KEY=your-anon-key
+```
+
+---
+
+## Available Scripts
+
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Start development server |
+| `npm run build` | Build for production |
+| `npm run preview` | Preview production build |
+| `npm run lint` | Run ESLint |
+| `npm run test` | Run test suite |
+| `npm run coverage` | Generate coverage report |
+
+---
+
+## Testing & Quality
+
+### Test Coverage
+
+| Metric | Result | Goal |
+|--------|--------|------|
+| **Statement Coverage** | **94.33%** | >90% |
+| **Branch Coverage** | **90.38%** | >85% |
+| **Line Coverage** | **95.20%** | >90% |
+| **Tests Passing** | **33** | All |
 
 ### Test Suite
-- **Unit Tests**: Covering `Auth`, `InputForm`, `Dashboard`, and `Sidebar` components.
-- **Integration Tests**: Verifying navigation flows in `App.jsx`.
-- **Validation Tests**: Ensuring invalid data (negative numbers) is rejected.
 
-### Verification Results
-| Metric | Result | Goal |
-| :--- | :--- | :--- |
-| **Statement Coverage** | **91.57%** | >90% |
-| **Line Coverage** | **93.18%** | >90% |
-| **Build Status** | **Success** | Pass |
-
-Running tests:
-```bash
-npm run test      # Run all tests
-npm run coverage  # Generate coverage report
 ```
+src/
+├── App.test.jsx           # Integration tests
+├── Auth.test.jsx          # Authentication tests
+├── Dashboard.test.jsx     # Dashboard component tests
+├── ErrorBoundary.test.jsx # Error handling tests
+├── InputForm.test.jsx     # Form validation tests
+└── utils/
+    └── validation.test.js # Validation logic tests
+```
+
+### Running Tests
+
+```bash
+npm run test              # Run all tests
+npm run test -- --watch   # Watch mode
+npm run coverage          # Generate coverage report
+```
+
+---
+
+## Project Structure
+
+```
+src/
+├── App.jsx              # Main app with routing & error boundary
+├── Auth.jsx             # Authentication (login/signup)
+├── Dashboard.jsx        # Analytics dashboard with charts
+├── InputForm.jsx        # Data entry form
+├── Sidebar.jsx          # Navigation sidebar
+├── ErrorBoundary.jsx    # Error handling component
+├── constants.js         # Centralized configuration
+├── supabase.js          # Supabase client with env validation
+├── index.css            # Global styles
+└── utils/
+    └── validation.js    # Form validation logic
+
+.github/
+└── workflows/
+    └── ci.yml           # CI/CD pipeline
+
+supabase/
+└── migrations/          # Database migrations
+```
+
+---
+
+## Architecture Highlights
+
+### Error Handling
+
+The app is wrapped in an `ErrorBoundary` that:
+- Catches JavaScript errors anywhere in the component tree
+- Displays a user-friendly fallback UI
+- Provides "Refresh" and "Try Again" recovery options
+- Shows error details in development mode
+
+### Code Splitting
+
+Heavy components are lazy-loaded to improve initial load time:
+
+```javascript
+const Dashboard = lazy(() => import('./Dashboard'));
+const InputForm = lazy(() => import('./InputForm'));
+```
+
+**Bundle sizes:**
+- Main bundle: ~408 KB
+- Dashboard (lazy): ~361 KB
+- InputForm (lazy): ~7 KB
+
+### Constants & Configuration
+
+Magic numbers and configuration are centralized in `constants.js`:
+
+```javascript
+export const VALIDATION = {
+  BOX_TOLERANCE_PERCENT: 0.05,  // 5% tolerance for box count validation
+};
+
+export const EMISSIONS = {
+  DIESEL_KG_CO2_PER_LITER: 2.68,
+  FERTILIZER_KG_CO2_PER_DOLLAR: 1.5,
+};
+```
+
+---
+
+## CI/CD Pipeline
+
+GitHub Actions workflow (`.github/workflows/ci.yml`):
+
+```
+┌─────────────┐     ┌─────────────┐
+│  Lint &     │────▶│   Build     │
+│  Test       │     │             │
+└─────────────┘     └─────────────┘
+      │                    │
+      ▼                    ▼
+ Coverage Report     Build Artifacts
+```
+
+- **Triggers**: Push/PR to `main` or `master`
+- **Jobs**: Lint → Test → Coverage → Build
+- **Artifacts**: Coverage reports and build output
+
+---
 
 ## Database Schema
 
 ### Table: `monthly_reports`
-Stores the raw input data from farmers.
 
 | Column | Type | Description |
-| :--- | :--- | :--- |
+|--------|------|-------------|
 | `id` | uuid | Primary Key |
+| `user_id` | uuid | Owner (FK to auth.users) |
 | `created_at` | timestamptz | Auto-generated timestamp |
-| `month_date` | date | The reporting month (e.g., 2024-01-01) |
-| `farm_area` | numeric | Total farm area in hectares |
+| `month_date` | date | Reporting month |
+| `farm_area` | numeric | Farm area in hectares |
 | `boxes_produced` | numeric | Total boxes produced |
 | `boxes_export_customers` | numeric | Boxes sold to export |
 | `boxes_local_market` | numeric | Boxes sold locally |
@@ -86,90 +235,80 @@ Stores the raw input data from farmers.
 | `boxes_rejected` | numeric | Rejected boxes |
 | `waste_boxes_supply_chain` | numeric | Supply chain waste |
 | `irrigation_hours` | numeric | Hours of irrigation |
-| `pump_capacity_gpm` | numeric | Pump capacity in GPM |
+| `pump_capacity_gpm` | numeric | Pump capacity (GPM) |
 | `diesel_consumed_liters` | numeric | Fuel usage |
-| `fertilizer_cost_ga` | numeric | Cost of GA fertilizer |
-| `fertilizer_cost_gec` | numeric | Cost of GE.C fertilizer |
+| `fertilizer_cost_ga` | numeric | GA fertilizer cost |
+| `fertilizer_cost_gec` | numeric | GE.C fertilizer cost |
 | `labor_cost` | numeric | Total labor cost |
 | `maintenance_cost` | numeric | Maintenance expenses |
 | `avg_selling_price` | numeric | Average price per box |
 
 ### View: `monthly_metrics`
-Calculates derived KPIs automatically.
+
+Calculates derived KPIs:
+- `total_revenue` - boxes × price
+- `revenue_per_ha` - revenue / area
+- `ghg_emissions_kg` - diesel + fertilizer emissions
+- `water_usage_m3` - irrigation × pump capacity
+
+---
+
+## Security
+
+### Row Level Security (RLS)
+
+All database operations are protected by Postgres RLS:
+
+- Users can only access their own data
+- `user_id` column auto-populated via `DEFAULT auth.uid()`
+- Policies enforce SELECT, INSERT, UPDATE, DELETE restrictions
+
+### Data Integrity Constraints
 
 ```sql
-create view monthly_metrics as
-select
-  id,
-  month_date,
-  -- Revenue
-  (boxes_produced * avg_selling_price) as total_revenue,
-  
-  -- Efficiency
-  ((boxes_produced * avg_selling_price) / nullif(farm_area, 0)) as revenue_per_ha,
-  (boxes_produced / nullif(farm_area, 0)) as boxes_per_ha,
-  
-  -- GHG Emissions (Estimated)
-  -- 2.68 kg CO2 per liter diesel
-  -- 1.5 kg CO2 per dollar of fertilizer (approximation)
-  ((diesel_consumed_liters * 2.68) + ((fertilizer_cost_ga + fertilizer_cost_gec) * 1.5)) as total_emissions_kg,
-  
-  -- Water Usage
-  (irrigation_hours * pump_capacity_gpm * 60 * 0.00378541) as water_usage_m3
-from monthly_reports;
+CHECK (boxes_produced >= 0)
+CHECK (irrigation_hours >= 0)
+CHECK (diesel_consumed_liters >= 0)
 ```
 
-## Key Implementation Details
+### Environment Security
 
-### Smart Validation Logic
-We ensure data integrity not just by type checking, but by cross-validating component sums.
+- Credentials stored in environment variables
+- `.env` file excluded from version control
+- CI/CD uses GitHub Secrets for production builds
 
-```javascript
-// src/utils/validation.js
-export const validateFormData = (data) => {
-    // 1. Negative numbers
-    const numericFields = [ ... ]; // List of all numeric fields
-    
-    for (const field of numericFields) {
-        if (data[field] && Number(data[field]) < 0) {
-            return { isValid: false, message: `Value for ${field} cannot be negative.` };
-        }
-    }
+---
 
-    // 2. Cross-field validation (Total Boxes vs Breakdown)
-    const total = Number(data.boxes_produced || 0);
-    const sum = Number(data.boxes_export_customers || 0) +
-                Number(data.boxes_local_market || 0) +
-                // ... other components
-                Number(data.waste_boxes_supply_chain || 0);
+## Deployment
 
-    if (total > 0 && Math.abs(total - sum) > (total * 0.05)) { // 5% tolerance
-        return { 
-            isValid: true, 
-            warning: `Warning: Total boxes (${total}) varies from component sum (${sum}) by >5%.` 
-        };
-    }
-    
-    return { isValid: true };
-};
+### Cloudflare Pages
+
+```bash
+# Build settings
+Build command: npm run build
+Output directory: dist
+
+# Environment variables (set in dashboard)
+VITE_SUPABASE_URL=your-url
+VITE_SUPABASE_ANON_KEY=your-key
 ```
 
-## Backend & Security
+### Vercel / Netlify
 
-The backend has been hardened for production environments with Multi-Tenancy support and strict security rules.
+Similar configuration—set environment variables in the platform dashboard and use `npm run build` with `dist` as the output directory.
 
-### 1. Row Level Security (RLS)
-The `monthly_reports` table is protected by Postgres Row Level Security.
-- **Scope**: Users can **only** access (SELECT, INSERT, UPDATE, DELETE) their own rows.
-- **Mechanism**: A `user_id` column references `auth.users` and is checked against `auth.uid()` in every policy.
-- **Default Behavior**: New rows automatically get the current user's ID via `DEFAULT auth.uid()`.
+---
 
-### 2. Data Integrity
-Database-level constraints prevent invalid financial or production data from entering the system.
-- `check_boxes_produced_positive`: `boxes_produced >= 0`
-- `check_irrigation_positive`: `irrigation_hours >= 0`
-- `check_diesel_positive`: `diesel_consumed_liters >= 0`
+## Contributing
 
-### 3. Migrations
-Database changes are tracked in SQL migration files.
-- `supabase/migrations/20260113170000_production_hardening.sql`: Contains the schema upgrade for RLS and Constraints.
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit changes (`git commit -m 'Add amazing feature'`)
+4. Push to branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+---
+
+## License
+
+MIT License - see [LICENSE](LICENSE) for details.
