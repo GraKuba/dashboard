@@ -28,7 +28,7 @@ export const WATER = {
 // UI Configuration
 export const UI = {
   // Toast notification position
-  TOAST_POSITION: 'top-right',
+  TOAST_POSITION: "top-right",
   // Animation duration in ms
   ANIMATION_DURATION: 300,
   // Debounce delay for localStorage saves (ms)
@@ -37,5 +37,5 @@ export const UI = {
 
 // Local Storage Keys
 export const STORAGE_KEYS = {
-  MONTHLY_REPORT_DRAFT: 'monthly_report_draft',
+  MONTHLY_REPORT_DRAFT: "monthly_report_draft",
 };

@@ -43,9 +43,9 @@ export function Sidebar({ currentView, setView }) {
         )}
       </button>
 
-      <div 
+      <div
         id="nav-container"
-        className={`nav-container ${isOpen ? 'open' : 'closed'}`}
+        className={`nav-container ${isOpen ? "open" : "closed"}`}
         role="menu"
       >
         <div className="desktop-spacer" aria-hidden="true"></div>

@@ -49,7 +49,7 @@ describe('ErrorBoundary', () => {
 
     it('resets error state when Try Again clicked and re-rendered', () => {
         // This test verifies the reset mechanism works
-        const { rerender } = render(
+        render(
             <ErrorBoundary>
                 <ThrowError shouldThrow={true} />
             </ErrorBoundary>
