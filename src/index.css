@@ -61,10 +61,11 @@ img, svg, canvas {
 /* Sidebar Layout */
 .app-layout {
   display: flex;
-  min-height: 100vh;
+  height: 100vh;
   background: var(--bg-page);
   width: 100%;
   min-width: 0;
+  overflow: hidden; /* Prevent body scroll - only main-content scrolls */
 }
 
 .sidebar {
@@ -74,13 +75,11 @@ img, svg, canvas {
   padding: 24px;
   display: flex;
   flex-direction: column;
-  /* Keep sidebar visible without removing it from layout (prevents horizontal overflow) */
-  position: sticky;
-  top: 0;
   height: 100vh;
   box-sizing: border-box;
   z-index: 10;
   flex: 0 0 250px;
+  overflow: hidden; /* Sidebar never scrolls */
 }
 
 .sidebar-brand {
@@ -129,8 +128,10 @@ img, svg, canvas {
 
 .main-content {
   flex: 1;
-  padding: 40px 48px; /* More horizontal padding */
+  padding: 40px 48px;
   min-width: 0;
+  overflow-y: auto; /* Only main content scrolls */
+  height: 100vh;
 }
 
 /* Center the content within the main column without affecting sidebar layout */
@@ -453,40 +454,39 @@ tr:hover td {
 @media (max-width: 1024px) {
     .app-layout {
         flex-direction: column;
+        height: auto; /* Allow normal page scroll on mobile */
+        overflow: visible;
     }
     
     .sidebar {
-        width: 100%;
-        height: 56px !important; /* keep the top bar compact */
-        min-height: 56px;
+        width: 100% !important;
+        height: 56px !important;
+        min-height: 56px !important;
+        max-height: 56px !important;
+        overflow: hidden !important;
         position: sticky;
         top: 0;
         border-right: none;
         border-bottom: 1px solid var(--border);
-        /* Full-bleed background + safe-area friendly padding */
-        padding: 0 max(12px, env(safe-area-inset-right)) 0 max(12px, env(safe-area-inset-left));
+        padding: 0 12px !important;
         flex-direction: row;
+        flex-wrap: nowrap;
         align-items: center;
         justify-content: space-between;
         z-index: 20;
-        left: 0;
-        right: 0;
-    }
-
-    .sidebar-header-mobile {
-        height: 56px;
-        align-items: center;
     }
 
     .sidebar-brand {
-        margin-bottom: 0 !important;
-        padding-left: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
         font-size: 16px;
     }
 
     .main-content {
         margin-left: 0;
         padding: 24px 16px;
+        height: auto; /* Reset height for mobile */
+        overflow-y: visible; /* Normal scroll on mobile */
     }
 }
 
