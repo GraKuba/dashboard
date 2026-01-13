@@ -29,15 +29,17 @@ function ChartCard({ title, children, loading }) {
         return (
              <div className="card" style={{ minHeight: '400px' }}>
                 <h2>{title}</h2>
-                <div className="skeleton" style={{ flex: 1, width: '100%', borderRadius: '4px' }}></div>
+                <div className="skeleton" style={{ flex: 1, width: '100%', borderRadius: '4px', marginTop: '300px' }}></div>
             </div>
         )
     }
     return (
         <div className="card" style={{ minHeight: '400px' }}>
             <h2>{title}</h2>
-            <div style={{ flex: 1, minHeight: 0 }}>
-                {children}
+            <div style={{ flex: 1, minHeight: 0, position: 'relative' }}>
+                <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}>
+                    {children}
+                </div>
             </div>
         </div>
     )
@@ -94,7 +96,7 @@ export function Dashboard() {
             `}</style>
             
             {/* KPI Cards Row */}
-            <div className="data-grid">
+            <div className="data-grid" style={{ marginBottom: '64px' }}>
                 <MetricCard 
                     loading={loading}
                     title="Revenue / Hectare"
@@ -118,10 +120,10 @@ export function Dashboard() {
             </div>
 
             {/* Charts Row */}
-            <div className="data-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))' }}>
+            <div className="charts-grid" style={{ marginTop: '32px', marginBottom: '64px' }}>
                 <ChartCard title="GHG Emissions vs Revenue" loading={loading}>
                     <ResponsiveContainer width="100%" height="100%">
-                        <LineChart data={metrics}>
+                        <LineChart data={metrics} margin={{ top: 5, right: 40, left: 0, bottom: 5 }}>
                             <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e6ebf1" />
                             <XAxis dataKey="month_date" axisLine={false} tickLine={false} tick={{fill: '#8898aa', fontSize: 12}} dy={10} />
                             <YAxis yAxisId="left" axisLine={false} tickLine={false} tick={{fill: '#ef4444', fontSize: 12}} />
@@ -147,7 +149,7 @@ export function Dashboard() {
             </div>
 
             {/* Data Table */}
-            <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
+            <div className="card" style={{ padding: 0, overflow: 'hidden', marginTop: '32px' }}>
                 <h2 style={{ padding: '24px 24px 0 24px' }}>Detailed History</h2>
                 <div className="table-container">
                     <table>

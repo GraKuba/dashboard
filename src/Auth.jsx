@@ -1,6 +1,7 @@
 
 import { useState } from 'react';
 import { supabase } from './supabase';
+import { toast } from 'sonner';
 
 export function Auth() {
   const [loading, setLoading] = useState(false);
@@ -17,17 +18,17 @@ export function Auth() {
           email, 
           password,
           options: {
-            emailRedirectTo: 'https://dashboard-83l.pages.dev'
+            emailRedirectTo: `${window.location.origin}`
           }
         });
         if (error) throw error;
-        alert('Check your email for the login link!');
+        toast.success('Check your email for the login link!');
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
       }
     } catch (error) {
-      alert(error.message);
+      toast.error(error.message);
     } finally {
       setLoading(false);
     }

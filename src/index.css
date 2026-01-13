@@ -37,6 +37,20 @@ body {
   line-height: 1.5;
 }
 
+/* Global layout safety: prevent width blowouts on mobile */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100%;
+  overflow-x: hidden;
+}
+
+img, svg, canvas {
+  max-width: 100%;
+}
+
 #root {
   width: 100%;
   min-height: 100vh;
@@ -49,6 +63,8 @@ body {
   display: flex;
   min-height: 100vh;
   background: var(--bg-page);
+  width: 100%;
+  min-width: 0;
 }
 
 .sidebar {
@@ -58,10 +74,13 @@ body {
   padding: 24px;
   display: flex;
   flex-direction: column;
-  position: fixed;
+  /* Keep sidebar visible without removing it from layout (prevents horizontal overflow) */
+  position: sticky;
+  top: 0;
   height: 100vh;
   box-sizing: border-box;
   z-index: 10;
+  flex: 0 0 250px;
 }
 
 .sidebar-brand {
@@ -109,11 +128,16 @@ body {
 }
 
 .main-content {
-  margin-left: 250px;
   flex: 1;
   padding: 40px 48px; /* More horizontal padding */
-  max-width: 1200px;
+  min-width: 0;
+}
+
+/* Center the content within the main column without affecting sidebar layout */
+.main-content > .animate-enter {
   width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 /* Auth Page */
@@ -248,9 +272,37 @@ input::placeholder {
 
 .data-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: 1fr; /* Default: single column on mobile */
   gap: 24px;
-  margin-bottom: 32px;
+  margin-bottom: 48px;
+}
+
+/* 2 columns on tablets */
+@media (min-width: 768px) {
+  .data-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* 3 columns on large screens */
+@media (min-width: 1200px) {
+  .data-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.charts-grid {
+  display: grid;
+  grid-template-columns: 1fr; /* Default: single column */
+  gap: 32px;
+  margin-bottom: 48px;
+}
+
+/* Only use 2 columns on very large screens */
+@media (min-width: 1200px) {
+  .charts-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 .card {
@@ -263,6 +315,8 @@ input::placeholder {
   display: flex;
   flex-direction: column;
   height: 100%;
+  min-width: 0; /* CRITICAL: Prevents grid blowout with Recharts */
+  overflow: hidden; /* Prevent chart axis labels from overflowing */
 }
 
 .card:hover {
@@ -318,7 +372,7 @@ input::placeholder {
 }
 
 .form-section {
-    padding: 32px;
+    padding: 40px;
     border-bottom: 1px solid var(--border);
 }
 .form-section:last-child {
@@ -395,29 +449,37 @@ tr:hover td {
     background-color: #fbfbfc;
 }
 
-/* Responsive Layout */
-@media (max-width: 768px) {
+/* Responsive Layout (mobile + medium/tablet): use top bar instead of left sidebar */
+@media (max-width: 1024px) {
     .app-layout {
         flex-direction: column;
     }
     
     .sidebar {
         width: 100%;
-        height: auto;
-        position: relative;
+        height: auto !important;
+        min-height: 56px;
+        position: sticky;
+        top: 0;
         border-right: none;
         border-bottom: 1px solid var(--border);
-        padding: 16px 20px;
+        padding: 10px 12px;
         flex-direction: row;
         align-items: center;
         justify-content: space-between;
+        z-index: 20;
+        left: 0;
+        right: 0;
     }
 
     .main-content {
         margin-left: 0;
         padding: 24px 16px;
     }
+}
 
+/* Mobile-only tightening */
+@media (max-width: 768px) {
     .dashboard-header {
         flex-direction: column;
         align-items: flex-start;
@@ -428,4 +490,77 @@ tr:hover td {
         width: 100%;
         justify-content: space-between;
     }
+
+    /* Responsive spacing for grids on smaller screens */
+    .data-grid,
+    .charts-grid {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 24px !important;
+        margin-bottom: 48px !important;
+        margin-top: 24px !important;
+    }
+
+    .data-grid > .card,
+    .charts-grid > .card {
+        margin-bottom: 24px !important;
+        width: 100% !important;
+    }
+
+    /* Ensure charts have fixed height on mobile */
+    .charts-grid .card {
+        min-height: 350px !important;
+        height: auto !important;
+    }
+
+    /* Tables: keep page from horizontal scrolling; table can scroll within card */
+    .table-container {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    table {
+        min-width: 720px;
+    }
+
+    th, td {
+        padding: 12px 16px;
+        white-space: nowrap;
+    }
+}
+/* Animations */
+@keyframes fadeInSlideUp {
+  0% { opacity: 0; transform: translateY(10px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideInRight {
+  0% { transform: translateX(100%); }
+  100% { transform: translateX(0); }
+}
+
+@keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+/* Utility Class for Content Transition */
+.animate-enter {
+  animation: fadeInSlideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Scrollbar Polish */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
 }

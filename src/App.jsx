@@ -6,6 +6,8 @@ import { Dashboard } from './Dashboard'
 import { InputForm } from './InputForm'
 import { Sidebar } from './Sidebar'
 
+import { Toaster } from 'sonner'
+
 function App() {
   const [session, setSession] = useState(null)
   const [view, setView] = useState('dashboard') // dashboard | input
@@ -37,24 +39,32 @@ function App() {
   }
 
   if (!session) {
-    return <Auth />
+    return (
+      <>
+        <Toaster position="top-right" />
+        <Auth />
+      </>
+    )
   }
 
   return (
     <div className="app-layout">
+        <Toaster position="top-right" />
         <Sidebar currentView={view} setView={setView} />
         
         <div className="main-content">
-            {view === 'dashboard' ? (
-                <>
-                    <header style={{ marginBottom: '32px' }}>
-                        <h1 style={{ margin: 0 }}>Overview</h1>
-                    </header>
-                    <Dashboard />
-                </>
-            ) : (
-                <InputForm onSaved={() => setView('dashboard')} />
-            )}
+            <div key={view} className="animate-enter">
+                {view === 'dashboard' ? (
+                    <>
+                        <header style={{ marginBottom: '32px' }}>
+                            <h1 style={{ margin: 0 }}>Overview</h1>
+                        </header>
+                        <Dashboard />
+                    </>
+                ) : (
+                    <InputForm onSaved={() => setView('dashboard')} />
+                )}
+            </div>
         </div>
     </div>
   )
