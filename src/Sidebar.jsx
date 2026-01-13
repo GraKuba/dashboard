@@ -76,7 +76,8 @@ export function Sidebar({ currentView, setView }) {
                         height: 100vh;
                         background: var(--bg-surface);
                         z-index: 1000;
-                        padding: 80px 24px 40px 24px;
+                        /* Match compact top bar height */
+                        padding: calc(env(safe-area-inset-top) + 72px) 24px 40px 24px;
                         margin-top: 0;
                         box-sizing: border-box;
                         /* Animation Logic */

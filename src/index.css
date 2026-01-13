@@ -457,19 +457,31 @@ tr:hover td {
     
     .sidebar {
         width: 100%;
-        height: auto !important;
+        height: 56px !important; /* keep the top bar compact */
         min-height: 56px;
         position: sticky;
         top: 0;
         border-right: none;
         border-bottom: 1px solid var(--border);
-        padding: 10px 12px;
+        /* Full-bleed background + safe-area friendly padding */
+        padding: 0 max(12px, env(safe-area-inset-right)) 0 max(12px, env(safe-area-inset-left));
         flex-direction: row;
         align-items: center;
         justify-content: space-between;
         z-index: 20;
         left: 0;
         right: 0;
+    }
+
+    .sidebar-header-mobile {
+        height: 56px;
+        align-items: center;
+    }
+
+    .sidebar-brand {
+        margin-bottom: 0 !important;
+        padding-left: 0 !important;
+        font-size: 16px;
     }
 
     .main-content {
