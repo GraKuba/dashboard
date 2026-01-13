@@ -27,6 +27,11 @@ function App() {
     return () => subscription.unsubscribe()
   }, [])
 
+  // Scroll to top when view changes
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [view]);
+
   if (loadingSession) {
       return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', color: '#635bff' }}>Loading...</div>
   }

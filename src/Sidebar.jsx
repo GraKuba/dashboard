@@ -1,46 +1,76 @@
 
+import { useState } from 'react';
 import { supabase } from './supabase';
-import { LayoutDashboard, FilePlus, LogOut, Sprout } from 'lucide-react';
+import { LayoutDashboard, FilePlus, LogOut, Sprout, Menu, X } from 'lucide-react';
 
 export function Sidebar({ currentView, setView }) {
+    const [isOpen, setIsOpen] = useState(false);
+
+    const handleNav = (view) => {
+        setView(view);
+        setIsOpen(false); // Close menu on selection (mobile)
+    };
+
     return (
         <div className="sidebar">
-            <div className="sidebar-brand">
-                <Sprout size={28} color="var(--accent)" style={{ marginRight: '10px' }} />
-                <span>FarmerPortal</span>
-            </div>
-            
-            <div 
-                className={`nav-item ${currentView === 'dashboard' ? 'active' : ''}`}
-                onClick={() => setView('dashboard')}
-            >
-                <div className="nav-icon">
-                    <LayoutDashboard size={20} />
+            <div className="sidebar-header-mobile" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+                <div className="sidebar-brand" style={{ margin: 0 }}>
+                    <Sprout size={24} color="var(--accent)" style={{ marginRight: '10px' }} />
+                    <span>FarmerPortal</span>
                 </div>
-                Dashboard
+                {/* Mobile Toggle */}
+                <button 
+                    className="mobile-toggle" 
+                    onClick={() => setIsOpen(!isOpen)}
+                    style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '8px', display: 'none' }}
+                >
+                    {isOpen ? <X size={24} color="var(--text-primary)" /> : <Menu size={24} color="var(--text-primary)" />}
+                </button>
             </div>
-            
-            <div 
-                className={`nav-item ${currentView === 'input' ? 'active' : ''}`}
-                onClick={() => setView('input')}
-            >
-                <div className="nav-icon">
-                    <FilePlus size={20} />
-                </div>
-                New Report
-            </div>
-            
-            <div style={{ flex: 1 }}></div>
 
-            <div 
-                className="nav-item"
-                style={{ color: '#ef4444' }}
-                onClick={() => supabase.auth.signOut()}
-            >
-                <div className="nav-icon">
-                    <LogOut size={20} />
+            <style>{`
+                @media (max-width: 768px) {
+                    .mobile-toggle { display: block !important; }
+                    .nav-container { 
+                        display: ${isOpen ? 'flex' : 'none'} !important; 
+                        flex-direction: column;
+                        width: 100%;
+                        margin-top: 16px;
+                    }
+                    .sidebar { height: auto !important; flex-wrap: wrap; }
+                }
+                .nav-container { display: flex; flex-direction: column; width: 100%; flex: 1; }
+            `}</style>
+            
+            <div className="nav-container">
+                <div style={{ height: '32px' }} className="desktop-spacer"></div> {/* Spacing for desktop */}
+
+                <div 
+                    className={`nav-item ${currentView === 'dashboard' ? 'active' : ''}`}
+                    onClick={() => handleNav('dashboard')}
+                >
+                    <div className="nav-icon"><LayoutDashboard size={20} /></div>
+                    Dashboard
                 </div>
-                Sign Out
+                
+                <div 
+                    className={`nav-item ${currentView === 'input' ? 'active' : ''}`}
+                    onClick={() => handleNav('input')}
+                >
+                    <div className="nav-icon"><FilePlus size={20} /></div>
+                    New Report
+                </div>
+                
+                <div style={{ flex: 1 }}></div>
+
+                <div 
+                    className="nav-item"
+                    style={{ color: '#ef4444', marginTop: 'auto' }}
+                    onClick={() => supabase.auth.signOut()}
+                >
+                    <div className="nav-icon"><LogOut size={20} /></div>
+                    Sign Out
+                </div>
             </div>
         </div>
     );

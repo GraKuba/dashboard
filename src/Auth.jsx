@@ -13,7 +13,13 @@ export function Auth() {
     setLoading(true);
     try {
       if (isSignUp) {
-        const { error } = await supabase.auth.signUp({ email, password });
+        const { error } = await supabase.auth.signUp({ 
+          email, 
+          password,
+          options: {
+            emailRedirectTo: 'https://dashboard-83l.pages.dev'
+          }
+        });
         if (error) throw error;
         alert('Check your email for the login link!');
       } else {
